@@ -1,0 +1,108 @@
+#include <iostream>
+#include <unistd.h>
+#include "memoire_borne.h"
+#include "donnees_borne.h"
+#include "voyants.h"
+#include "lecteurcarte.h"
+#include "BaseClient.h"
+#include "bouton.h"
+#include"Prise.h"
+#include "Generateur_Save.h"
+int main()
+{
+	int CarteLue,user=0,choix=0,user2=0;
+	
+    LecteurCarte lecteurcarte;
+	BaseClient ListeClient;
+	Voyants Lumiere;
+	Bouton BTP;
+	Prise Trappe;
+	Generateur_Save Gen;
+    while (1)
+    {
+        cout<<"Inserez votre carte"<<endl;
+        lecteurcarte.initialiser();
+        lecteurcarte.lire_carte();
+        CarteLue=lecteurcarte.GetNumCarte();
+        user=ListeClient.identifier(CarteLue);
+        if(user != -1)
+        {
+        	cout<<"user: "<<ListeClient.GetNom(user)<<" "<<ListeClient.GetPrenom(user)<<" identifié avec succès"<<endl;
+        	if(ListeClient.GetSU(user)==1)
+        	{
+        		cout<<"Pour ajouter taper 1 |  Pour effacer taper 2 |0 pour retour :"<<endl;
+        		cin>>choix;
+        		switch(choix)
+        		{
+        			case(1):
+        				ListeClient.ajouter();
+        				choix=0;
+        				break;
+        			case(2):
+        			cout<<"Quel client retirer ?"<<endl;
+        			cin>>choix;
+        				ListeClient.retirer(choix);
+        				choix=0;
+        				break;
+        			
+        		}
+        	
+        	}
+        	else
+        	{
+        		Lumiere.SetBlinkCharge();
+        		cout<<"Appuyez sur Charge pour lancer !"<<endl;
+        		while((BTP.GetCharge())!=1)
+        		{
+        			BTP.SetCharge();
+        		}
+        		Lumiere.SetDispo();//eteinds dispo
+        		Lumiere.SetCharge();
+        		Trappe.DeverrouillerTrappe();
+        		cout<<"Fermez la prise !"<<endl;
+        		Gen.Charger();
+        		Lumiere.SetPrise();
+        		Trappe.VerrouillerTrappe();
+        		//cout<<"teste"<<endl;
+        		sleep(1);
+        		Gen.Generer_PWM(1);
+        		sleep(1);
+        		//cout<<"ac 1k?"<<endl;
+        		sleep(1);
+        		Gen.FermerAC();
+        		sleep(1);
+        		Gen.Generer_PWM(2);
+        		//cout<<"Fin?"<<endl;
+        		sleep(20);
+        		Gen.OuvrirAC();
+        		cout<<"Fini"<<endl;
+        		cout<<"Inserez votre carte"<<endl;
+        		while(user2=!user)
+        		{
+        		lecteurcarte.initialiser();
+        		lecteurcarte.lire_carte();
+        		CarteLue=lecteurcarte.GetNumCarte();
+        		user2=ListeClient.identifier(CarteLue);
+        		if(user2==user)
+        		{
+        			Trappe.DeverrouillerTrappe();
+        			cout<<"voiture récupérée"<<endl;
+        			break;
+        		}
+        		else
+        		{
+        			cout<<"vous n'etes pas le proprio"<<endl;
+        		
+        		}
+        		}
+        		Lumiere.SetDispo();
+        	}
+        	
+        }
+        else
+        	{
+        		cout<<"Vous n'étes pas enregistré, contacter un Administrateur."<<endl;
+        	}
+    }
+
+}

@@ -1,0 +1,31 @@
+#include"Client.h";
+
+Clients::Clients(int Number,string Name,string prenom,int Code, int Suser)
+{
+	Numero = Number;
+	Nom = Name;
+	Prenom=prenom;
+	MDP = Code
+	SU=Suser;
+}
+
+void GetNumero()
+{
+	return Numero;
+}
+void GetNom()
+{
+	return Nom;
+}
+void GetPrenom()
+{
+	return Prenom;
+}
+void GetMDP()
+{
+	return MDP;
+}
+void GetSU()
+{
+	return SU;
+}
